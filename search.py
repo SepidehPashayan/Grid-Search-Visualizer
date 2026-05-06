@@ -9,12 +9,33 @@ from collections import deque
 import heapq
 import math
 
+
 # ---------------------
 # BFS
 # ---------------------
 def breadth_first_search(start, goal, neighbors_fn):
     # TODO: Implement BFS Algorithm
-    return None
+    fringe=deque([start])
+    explored={start}
+    parent = {start: None}
+
+    while fringe:
+        current_node = fringe.popleft()
+        if current_node == goal:
+            path = []
+            node = goal
+            while node is not None:
+                path.append(node)
+                node = parent[node]
+            return path[::-1]
+    
+        for neighbor in neighbors_fn(current_node):
+              if neighbor not in explored:
+                   explored.add(neighbor)
+                   parent[neighbor] = current_node
+                   fringe.append(neighbor)
+    
+    return None 
 
 
 # ---------------------
@@ -22,6 +43,26 @@ def breadth_first_search(start, goal, neighbors_fn):
 # ---------------------
 def depth_first_search(start, goal, neighbors_fn):
     # TODO: Implement DFS Algorithm
+    fringe=deque([start])
+    explored={start}
+    parent = {start: None}
+
+    while fringe:
+        current_node = fringe.pop()
+        if current_node == goal:
+            path = []
+            node = goal
+            while node is not None:
+                path.append(node)
+                node = parent[node]
+            return path[::-1]
+    
+        for neighbor in neighbors_fn(current_node):
+              if neighbor not in explored:
+                   explored.add(neighbor)
+                   parent[neighbor] = current_node
+                   fringe.append(neighbor)
+    
     return None
 
 

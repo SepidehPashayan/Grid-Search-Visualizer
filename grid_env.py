@@ -8,10 +8,12 @@ import random
 import sys
 from search import depth_first_search, breadth_first_search, uniform_cost_search, a_star_search
 
+#grid
 WIDTH, HEIGHT = 600, 600
 ROWS, COLS = 15, 15
 CELL_SIZE = WIDTH // COLS
 
+#colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREY = (200, 200, 200)
@@ -20,6 +22,8 @@ RED = (255, 0, 0)
 BROWN = (139, 69, 19)
 BLUE = (0, 0, 255)
 
+#put 1 in all cell
+#make empty road
 def generate_grid():
     grid = [[1 for _ in range(COLS)] for _ in range(ROWS)]
     for _ in range(40):
@@ -31,12 +35,13 @@ def generate_grid():
             grid[x][y] = 5
     return grid
 
+#walls
 def random_empty_cell(grid):
     while True:
         x, y = random.randrange(ROWS), random.randrange(COLS)
         if grid[x][y] is not None:
             return (x, y)
-
+#??
 def heuristic(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
@@ -55,6 +60,7 @@ def get_neighbors_fn(grid, moving_obstacles, weighted=False):
         return results
     return neighbors
 
+#moving walls
 def move_obstacles(moving_obstacles, grid):
     new_obs = set()
     for ox, oy in moving_obstacles:
@@ -71,6 +77,7 @@ def move_obstacles(moving_obstacles, grid):
             new_obs.add((ox, oy))
     return new_obs
 
+#draw the grid with colors
 def draw_grid(screen, grid, start, goal, current_pos, moving_obstacles):
     for x in range(ROWS):
         for y in range(COLS):
@@ -173,7 +180,6 @@ def main():
                 step += 1
 
             clock.tick(3)
-
 
 
 if __name__ == "__main__":
