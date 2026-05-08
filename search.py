@@ -71,6 +71,29 @@ def depth_first_search(start, goal, neighbors_fn):
 # ---------------------
 def uniform_cost_search(start, goal, neighbors_fn):
     # TODO: Implement UCS Algorithm
+    fringe = [(0, start)]
+    explored_costs = {start: 0}
+    parent = {start: None}
+
+    while fringe:
+        cost, current_node = heapq.heappop(fringe)
+        if cost > explored_costs.get(current_node, float('inf')):
+            continue
+        if current_node == goal:
+            path = []
+            node = goal
+            while node is not None:
+                path.append(node)
+                node = parent[node]
+            return path[::-1]
+    
+        for neighbor, step_cost in neighbors_fn(current_node):
+            new_cost = cost + step_cost
+            if new_cost < explored_costs.get(neighbor, float('inf')):
+                parent[neighbor] = current_node
+                explored_costs[neighbor] = new_cost
+                heapq.heappush(fringe, (new_cost, neighbor))
+    
     return None
 
 
