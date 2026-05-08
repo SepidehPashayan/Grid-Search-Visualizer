@@ -128,14 +128,23 @@ def main():
             algo = lambda s, g: depth_first_search(
                 s, g, get_neighbors_fn(grid, moving_obstacles, weighted=False)
             )
+            print("path:")
+            for item in depth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False)):
+                print(item)
         elif choice == "2":  # BFS
             algo = lambda s, g: breadth_first_search(
                 s, g, get_neighbors_fn(grid, moving_obstacles, weighted=False)
             )
+            print("path:")
+            for item in breadth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False)):
+                print(item)
         elif choice == "3":  # UCS
             algo = lambda s, g: uniform_cost_search(
                 s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True)
             )
+            print("path:")
+            for item in uniform_cost_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True)):
+                print(item)
         elif choice == "4":  # A* Manhattan
             algo = lambda s, g: a_star_search(
                 s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True),

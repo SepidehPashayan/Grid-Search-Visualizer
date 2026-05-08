@@ -35,7 +35,7 @@ def breadth_first_search(start, goal, neighbors_fn):
                    parent[neighbor] = current_node
                    fringe.append(neighbor)
     
-    return None 
+    return None , path
 
 
 # ---------------------
@@ -63,7 +63,7 @@ def depth_first_search(start, goal, neighbors_fn):
                    parent[neighbor] = current_node
                    fringe.append(neighbor)
     
-    return None
+    return None , path
 
 
 # ---------------------
@@ -94,7 +94,7 @@ def uniform_cost_search(start, goal, neighbors_fn):
                 explored_costs[neighbor] = new_cost
                 heapq.heappush(fringe, (new_cost, neighbor))
     
-    return None
+    return None , path
 
 
 # ---------------------
