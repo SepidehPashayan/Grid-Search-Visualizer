@@ -150,11 +150,17 @@ def main():
                 s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True),
                 heuristic="manhattan"
             )
+            print("path:")
+            for item in a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True ), heuristic="manhattan"):
+                print(item)
         elif choice == "5":  # A* Euclidean
             algo = lambda s, g: a_star_search(
                 s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True),
                 heuristic="euclidean"
             )
+            print("path:")
+            for item in a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True) , heuristic="euclidean" ):
+                print(item)
         else:
             print("Invalid choice")
             pygame.quit()
