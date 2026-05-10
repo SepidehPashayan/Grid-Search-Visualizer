@@ -116,62 +116,76 @@ def main():
         goal = random_empty_cell(grid)
         moving_obstacles = {(random.randrange(ROWS), random.randrange(COLS)) for _ in range(5)}
 
-        print("\nChoose algorithm:")
-        print("1: DFS")
-        print("2: BFS")
-        print("3: UCS")
-        print("4: A* (Manhattan)")
-        print("5: A* (Euclidean)")
-        choice = input("Enter choice: ")
+        print("\t💗Hi. welcome💗")
+        print("\t💙what do you want to do ?💙")
 
-        if choice == "1":  # DFS
-            algo = lambda s, g: depth_first_search(
-                s, g, get_neighbors_fn(grid, moving_obstacles, weighted=False)
-            )
-            print("path:")
-            for item in depth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False)):
-                print(item)
-        elif choice == "2":  # BFS
-            algo = lambda s, g: breadth_first_search(
-                s, g, get_neighbors_fn(grid, moving_obstacles, weighted=False)
-            )
-            print("path:")
-            for item in breadth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False)):
-                print(item)
-        elif choice == "3":  # UCS
-            algo = lambda s, g: uniform_cost_search(
-                s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True)
-            )
-            print("path:")
-            for item in uniform_cost_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True)):
-                print(item)
-        elif choice == "4":  # A* Manhattan
-            algo = lambda s, g: a_star_search(
-                s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True),
-                heuristic="manhattan"
-            )
-            print("path:")
-            for item in a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True ), heuristic="manhattan"):
-                print(item)
-        elif choice == "5":  # A* Euclidean
-            algo = lambda s, g: a_star_search(
-                s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True),
-                heuristic="euclidean"
-            )
-            print("path:")
-            for item in a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True) , heuristic="euclidean" ):
-                print(item)
+        print("1:Try a strategy🧡")
+        print("2.compare strategies🤍")
+        x = input("Enter choice:")
+
+        if x=="1":
+            print("\nChoose algorithm:")
+            print("1: DFS💛")
+            print("2: BFS💜")
+            print("3: UCS💚")
+            print("4: A* (Manhattan)💗")
+            print("5: A* (Euclidean)🤎")
+            choice = input("Enter choice: ")
+
+            if choice == "1":  # DFS
+                algo = lambda s, g: depth_first_search(
+                    s, g, get_neighbors_fn(grid, moving_obstacles, weighted=False)
+                )
+                print("path:")
+                for item in depth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False)):
+                    print(item)
+            elif choice == "2":  # BFS
+                algo = lambda s, g: breadth_first_search(
+                    s, g, get_neighbors_fn(grid, moving_obstacles, weighted=False)
+                )
+                print("path:")
+                for item in breadth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False)):
+                    print(item)
+            elif choice == "3":  # UCS
+                algo = lambda s, g: uniform_cost_search(
+                    s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True)
+                )
+                print("path:")
+                for item in uniform_cost_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True)):
+                    print(item)
+            elif choice == "4":  # A* Manhattan
+                algo = lambda s, g: a_star_search(
+                    s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True),
+                    heuristic="manhattan"
+                )
+                print("path:")
+                for item in a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True ), heuristic="manhattan"):
+                    print(item)
+            elif choice == "5":  # A* Euclidean
+                algo = lambda s, g: a_star_search(
+                    s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True),
+                    heuristic="euclidean"
+                )
+                print("path:")
+                for item in a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True) , heuristic="euclidean" ):
+                    print(item)
+            else:
+                print("Invalid choice")
+                pygame.quit()
+                sys.exit()
+
+
+            path = algo(start, goal)
+            step = 0
+            clock = pygame.time.Clock()
+
+            running = True
+        elif x=="2":
+            pass
         else:
             print("Invalid choice")
             pygame.quit()
             sys.exit()
-
-
-        path = algo(start, goal)
-        step = 0
-        clock = pygame.time.Clock()
-
-        running = True
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
