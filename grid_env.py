@@ -119,15 +119,21 @@ def compare (start, goal, grid, moving_obstacles):
         total_time = 0
         total_path_length = 0
         paths_found = 0
+        exp = 0
+        cost_all = 0
         for _ in range(5):
             start_time = time.time()
-            path = algo_func()
+            if name == "DFS" or name == "BFS":
+                path , explore = algo_func()
+            else:
+                path , explore , cost = algo_func()
+                cost_all += cost
             end_time = time.time()
-
+            exp += explore
             elapsed_time = end_time - start_time
             total_time += elapsed_time
 
-            if path and path[0] != "path doesn't exist in":
+            if path and isinstance(path, list) and len(path) > 0: 
                 total_path_length += len(path) - 1
                 paths_found += 1
             else:
@@ -135,11 +141,17 @@ def compare (start, goal, grid, moving_obstacles):
 
         avg_time = total_time / 5 if paths_found > 0 else 0
         avg_path = total_path_length / paths_found if paths_found > 0 else 0
+        avg_exp = exp / 5
+        avg_cost = cost_all / 5
 
         results[name] = {"avg_time": avg_time, "avg_path": avg_path}
-        print(f"\n--- {name} ---")
-        print(f"Average Time: {avg_time:.6f} seconds")
-        print(f"Average Path Length: {avg_path:.2f}")
+        print(f"\n💛 {name} 💛")
+        print(f"Average Time: {avg_time} seconds")
+        print(f"Average Path Length: {avg_path}")
+        print(f"Explored Nodes: {avg_exp}")
+        if name == "UCS" or name == "A* Manhattan" or name == "A* Euclidean":
+            print(f"Cost: {avg_cost}")
+
 
         
 
@@ -172,50 +184,39 @@ def main():
             print("5: A* (Euclidean)🤎")
             choice = input("Enter choice: ")
 
+            path = None  
+            result = None
+
             if choice == "1":  # DFS
-                algo = lambda s, g: depth_first_search(
-                    s, g, get_neighbors_fn(grid, moving_obstacles, weighted=False)
-                )
-                print("path:")
-                for item in depth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False)):
-                    print(item)
+                result = depth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False))
             elif choice == "2":  # BFS
-                algo = lambda s, g: breadth_first_search(
-                    s, g, get_neighbors_fn(grid, moving_obstacles, weighted=False)
-                )
-                print("path:")
-                for item in breadth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False)):
-                    print(item)
+                result = breadth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False))
             elif choice == "3":  # UCS
-                algo = lambda s, g: uniform_cost_search(
-                    s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True)
-                )
-                print("path:")
-                for item in uniform_cost_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True)):
-                    print(item)
+                result = uniform_cost_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True))
             elif choice == "4":  # A* Manhattan
-                algo = lambda s, g: a_star_search(
-                    s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True),
-                    heuristic="manhattan"
-                )
-                print("path:")
-                for item in a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True ), heuristic="manhattan"):
-                    print(item)
+                result = a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True), heuristic="manhattan")
             elif choice == "5":  # A* Euclidean
-                algo = lambda s, g: a_star_search(
-                    s, g, get_neighbors_fn(grid, moving_obstacles, weighted=True),
-                    heuristic="euclidean"
-                )
-                print("path:")
-                for item in a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True) , heuristic="euclidean" ):
-                    print(item)
+                result = a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True), heuristic="euclidean")
             else:
                 print("Invalid choice")
                 pygame.quit()
                 sys.exit()
 
 
-            path = algo(start, goal)
+            if result:
+                if isinstance(result, tuple) and len(result) >= 1:
+                    path = result[0] 
+                else: 
+                    path = result
+            
+            print("path:")
+            if isinstance(path, list):
+                for item in path:
+                    print(item)
+            else:
+                print("Path not found")
+
+
             step = 0
             clock = pygame.time.Clock()
 

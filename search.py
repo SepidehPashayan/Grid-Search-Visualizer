@@ -27,7 +27,7 @@ def breadth_first_search(start, goal, neighbors_fn):
             while node is not None:
                 path.append(node)
                 node = parent[node]
-            return path[::-1]
+            return path[::-1] , len(explored)
     
         for neighbor in neighbors_fn(current_node):
               if neighbor not in explored:
@@ -35,7 +35,7 @@ def breadth_first_search(start, goal, neighbors_fn):
                    parent[neighbor] = current_node
                    fringe.append(neighbor)
     
-    return None , path
+    return None , [] , len(explored)
 
 
 # ---------------------
@@ -55,7 +55,7 @@ def depth_first_search(start, goal, neighbors_fn):
             while node is not None:
                 path.append(node)
                 node = parent[node]
-            return path[::-1]
+            return path[::-1] , len(explored)
     
         for neighbor in neighbors_fn(current_node):
               if neighbor not in explored:
@@ -63,7 +63,7 @@ def depth_first_search(start, goal, neighbors_fn):
                    parent[neighbor] = current_node
                    fringe.append(neighbor)
     
-    return None , path
+    return None , [] , len(explored)
 
 
 # ---------------------
@@ -85,7 +85,7 @@ def uniform_cost_search(start, goal, neighbors_fn):
             while node is not None:
                 path.append(node)
                 node = parent[node]
-            return path[::-1]
+            return path[::-1] , len(explored_costs) , cost
     
         for neighbor, step_cost in neighbors_fn(current_node):
             new_cost = cost + step_cost
@@ -94,8 +94,7 @@ def uniform_cost_search(start, goal, neighbors_fn):
                 explored_costs[neighbor] = new_cost
                 heapq.heappush(fringe, (new_cost, neighbor))
     
-    return None , path
-
+    return None , [] , len(explored_costs) , cost
 
 # ---------------------
 # A* Search
@@ -135,7 +134,7 @@ def a_star_search(start, goal, neighbors_fn, heuristic):
             while node is not None:
                 path.append(node)
                 node = parent[node]
-            return path[::-1]
+            return path[::-1] , len(explored_costs) , current_g_cost
 
         for neighbor, step_cost in neighbors_fn(current_node):
             new_g_cost = current_g_cost + step_cost
@@ -151,4 +150,4 @@ def a_star_search(start, goal, neighbors_fn, heuristic):
                 heapq.heappush(fringe, (new_f_cost, new_g_cost, neighbor))
                 parent[neighbor] = current_node
 
-    return None , path
+    return None , [] , len(explored_costs) , current_g_cost
