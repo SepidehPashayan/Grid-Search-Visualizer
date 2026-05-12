@@ -6,6 +6,7 @@
 import pygame
 import random
 import sys
+import time
 from search import depth_first_search, breadth_first_search, uniform_cost_search, a_star_search
 
 #grid
@@ -103,6 +104,57 @@ def draw_grid(screen, grid, start, goal, current_pos, moving_obstacles):
         rect = pygame.Rect(cy*CELL_SIZE, cx*CELL_SIZE, CELL_SIZE, CELL_SIZE)
         pygame.draw.rect(screen, (0,255,255), rect)
 
+def compare (start, goal, grid, moving_obstacles): 
+    path_1 = [0] * 5
+    sum_time = 0
+    sum_path = 0
+    elapsed_time = [0] * 5 
+
+    neighbors_func1 = get_neighbors_fn(grid, moving_obstacles, weighted=True) 
+    neighbors_func2 = get_neighbors_fn(grid, moving_obstacles, weighted=False) 
+
+    func = [
+        breadth_first_search(start, goal, neighbors_func2),
+        depth_first_search(start, goal, neighbors_func2),
+        uniform_cost_search(start, goal, neighbors_func1),
+        a_star_search(start, goal, neighbors_func1 , heuristic="manhattan"),
+        a_star_search(start, goal, neighbors_func1 , heuristic="euclidean")          
+
+    ]
+    avg_T = []
+    avg_P = []
+    for j in func:
+        for i in range(5): 
+            start_time = time.time()
+            path = j
+            try:
+                if path:
+                    path_1 [i]= len(path) - 1 
+            except UnboundLocalError:
+                print(f"path doesn't exist in {i+1}")
+                path_1[i] = 0
+            end_time = time.time()
+            elapsed_time[i] = end_time - start_time 
+            sum_time += elapsed_time[i]
+            sum_path += path_1[i]
+        if j==func[0]:
+            print("BFS")
+        elif j==func[1]:
+            print("DFS")
+        elif j==func[2]:
+            print("UCS")
+        elif j==func[3]:
+            print("man")
+        elif j==func[4]:
+            print("ec")
+        avg_time = sum_time / 5
+        avg_path = sum_path / 5
+        avg_T.append(avg_time)
+        avg_P.append(avg_path)
+
+    return avg_T , avg_P
+        
+
 
 
 def main():
@@ -180,35 +232,36 @@ def main():
             clock = pygame.time.Clock()
 
             running = True
-        elif x=="2":
-            pass
-        else:
-            print("Invalid choice")
-            pygame.quit()
-            sys.exit()
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:  # quit completely
+            while running:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
                         pygame.quit()
                         sys.exit()
-                    if event.key == pygame.K_r:  # restart
-                        running = False
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:  # quit completely
+                            pygame.quit()
+                            sys.exit()
+                        if event.key == pygame.K_r:  # restart
+                            running = False
 
-            moving_obstacles = move_obstacles(moving_obstacles, grid)
+                moving_obstacles = move_obstacles(moving_obstacles, grid)
 
-            screen.fill(WHITE)
-            current_pos = path[step] if path and step < len(path) else start
-            draw_grid(screen, grid, start, goal, current_pos, moving_obstacles)
-            pygame.display.flip()
+                screen.fill(WHITE)
+                current_pos = path[step] if path and step < len(path) else start
+                draw_grid(screen, grid, start, goal, current_pos, moving_obstacles)
+                pygame.display.flip()
 
-            if path and step < len(path) - 1:
-                step += 1
+                if path and step < len(path) - 1:
+                    step += 1
 
-            clock.tick(3)
+                clock.tick(3)
+        elif x=="2":
+            avg_time , avg_path = compare(start,goal,grid, moving_obstacles)
+            print(f"avg time : {avg_time}")
+            print(f"avg path : {avg_path}")
+        else:
+            print("Invalid choice")
+        #if x=="1":
 
 
 if __name__ == "__main__":
