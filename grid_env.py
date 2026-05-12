@@ -104,55 +104,43 @@ def draw_grid(screen, grid, start, goal, current_pos, moving_obstacles):
         rect = pygame.Rect(cy*CELL_SIZE, cx*CELL_SIZE, CELL_SIZE, CELL_SIZE)
         pygame.draw.rect(screen, (0,255,255), rect)
 
-def compare (start, goal, grid, moving_obstacles): 
-    path_1 = [0] * 5
-    sum_time = 0
-    sum_path = 0
-    elapsed_time = [0] * 5 
-
-    neighbors_func1 = get_neighbors_fn(grid, moving_obstacles, weighted=True) 
-    neighbors_func2 = get_neighbors_fn(grid, moving_obstacles, weighted=False) 
-
-    func = [
-        breadth_first_search(start, goal, neighbors_func2),
-        depth_first_search(start, goal, neighbors_func2),
-        uniform_cost_search(start, goal, neighbors_func1),
-        a_star_search(start, goal, neighbors_func1 , heuristic="manhattan"),
-        a_star_search(start, goal, neighbors_func1 , heuristic="euclidean")          
-
+def compare (start, goal, grid, moving_obstacles):
+    algorithms = [
+        ("BFS", lambda: breadth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False))),
+        ("DFS", lambda: depth_first_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=False))),
+        ("UCS", lambda: uniform_cost_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True))),
+        ("A* Manhattan", lambda: a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True), heuristic="manhattan")),
+        ("A* Euclidean", lambda: a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True), heuristic="euclidean"))
     ]
-    avg_T = []
-    avg_P = []
-    for j in func:
-        for i in range(5): 
-            start_time = time.time()
-            path = j
-            try:
-                if path:
-                    path_1 [i]= len(path) - 1 
-            except UnboundLocalError:
-                print(f"path doesn't exist in {i+1}")
-                path_1[i] = 0
-            end_time = time.time()
-            elapsed_time[i] = end_time - start_time 
-            sum_time += elapsed_time[i]
-            sum_path += path_1[i]
-        if j==func[0]:
-            print("BFS")
-        elif j==func[1]:
-            print("DFS")
-        elif j==func[2]:
-            print("UCS")
-        elif j==func[3]:
-            print("man")
-        elif j==func[4]:
-            print("ec")
-        avg_time = sum_time / 5
-        avg_path = sum_path / 5
-        avg_T.append(avg_time)
-        avg_P.append(avg_path)
 
-    return avg_T , avg_P
+    results = {} 
+
+    for name, algo_func in algorithms:
+        total_time = 0
+        total_path_length = 0
+        paths_found = 0
+        for _ in range(5):
+            start_time = time.time()
+            path = algo_func()
+            end_time = time.time()
+
+            elapsed_time = end_time - start_time
+            total_time += elapsed_time
+
+            if path and path[0] != "path doesn't exist in":
+                total_path_length += len(path) - 1
+                paths_found += 1
+            else:
+                print(f"{name}: Path not found in this run.")
+
+        avg_time = total_time / 5 if paths_found > 0 else 0
+        avg_path = total_path_length / paths_found if paths_found > 0 else 0
+
+        results[name] = {"avg_time": avg_time, "avg_path": avg_path}
+        print(f"\n--- {name} ---")
+        print(f"Average Time: {avg_time:.6f} seconds")
+        print(f"Average Path Length: {avg_path:.2f}")
+
         
 
 
@@ -256,9 +244,7 @@ def main():
 
                 clock.tick(3)
         elif x=="2":
-            avg_time , avg_path = compare(start,goal,grid, moving_obstacles)
-            print(f"avg time : {avg_time}")
-            print(f"avg path : {avg_path}")
+            compare(start,goal,grid, moving_obstacles)
         else:
             print("Invalid choice")
         #if x=="1":
