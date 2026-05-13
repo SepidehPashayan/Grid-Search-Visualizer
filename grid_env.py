@@ -15,7 +15,8 @@ ROWS, COLS = 15, 15
 CELL_SIZE = WIDTH // COLS
 
 #colors
-WHITE = (255, 255, 255)
+WHITE = (255,255,255)
+PINK = (255, 80, 80)
 BLACK = (0, 0, 0)
 GREY = (200, 200, 200)
 GREEN = (0, 255, 0)
@@ -82,7 +83,9 @@ def move_obstacles(moving_obstacles, grid):
 def draw_grid(screen, grid, start, goal, current_pos, moving_obstacles):
     for x in range(ROWS):
         for y in range(COLS):
-            rect = pygame.Rect(y*CELL_SIZE, x*CELL_SIZE, CELL_SIZE, CELL_SIZE)
+            center_x = y * CELL_SIZE + CELL_SIZE // 2
+            center_y = x * CELL_SIZE + CELL_SIZE // 2
+            radius = CELL_SIZE // 2 - 2
             if (x, y) == start:
                 color = GREEN
             elif (x, y) == goal:
@@ -95,8 +98,8 @@ def draw_grid(screen, grid, start, goal, current_pos, moving_obstacles):
                 color = BROWN
             else:
                 color = WHITE
-            pygame.draw.rect(screen, color, rect)
-            pygame.draw.rect(screen, GREY, rect, 1)
+            pygame.draw.circle(screen, color, (center_x, center_y), radius)
+            pygame.draw.circle(screen, GREY, (center_x, center_y), radius, 1)
 
     # draw current agent position
     if current_pos:
@@ -173,6 +176,7 @@ def main():
 
         print("1:Try a strategy🧡")
         print("2.compare strategies🤍")
+        print("3.exit 💙")
         x = input("Enter choice:")
 
         if x=="1":
@@ -198,9 +202,8 @@ def main():
             elif choice == "5":  # A* Euclidean
                 result = a_star_search(start, goal, get_neighbors_fn(grid, moving_obstacles, weighted=True), heuristic="euclidean")
             else:
-                print("Invalid choice")
-                pygame.quit()
-                sys.exit()
+                print(".....Invalid choice.....")
+                continue
 
 
             if result:
@@ -235,7 +238,7 @@ def main():
 
                 moving_obstacles = move_obstacles(moving_obstacles, grid)
 
-                screen.fill(WHITE)
+                screen.fill(PINK)
                 current_pos = path[step] if path and step < len(path) else start
                 draw_grid(screen, grid, start, goal, current_pos, moving_obstacles)
                 pygame.display.flip()
@@ -246,9 +249,11 @@ def main():
                 clock.tick(3)
         elif x=="2":
             compare(start,goal,grid, moving_obstacles)
+        elif x=="3":
+            pygame.quit()
+            sys.exit()
         else:
-            print("Invalid choice")
-        #if x=="1":
+            print(".....Invalid choice.....")
 
 
 if __name__ == "__main__":
